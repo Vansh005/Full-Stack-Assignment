@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Registration Form</title>
+</head>
+<body>
+<h2>Registration Form</h2>
+<form id="regForm">
+  <label>Name</label>
+  <input type="text" id="name" required>
+  <div class="error" id="nameError"></div>
+
+  <label>Email</label>
+  <input type="email" id="email" required>
+  <div class="error" id="emailError"></div>
+
+  <label>Phone</label>
+  <input type="tel" id="phone" required>
+  <div class="error" id="phoneError"></div>
+
+  <label>Password</label>
+  <input type="password" id="password" required>
+  <button type="button" id="togglePassword">Show</button>
+  <div class="strength"><div class="strength-bar" id="strengthBar"></div></div>
+  <div class="error" id="passwordError"></div>
+
+  <button type="submit">Register</button>
+</form>
+
+<script>
+const form = document.getElementById('regForm');
+const nameInput = document.getElementById('name');
+const passwordInput = document.getElementById('password');
+const togglePassword = document.getElementById('togglePassword');
+const strengthBar = document.getElementById('strengthBar');
+
+const nameError = document.getElementById('nameError');
+const emailError = document.getElementById('emailError');
+const phoneError = document.getElementById('phoneError');
+const passwordError = document.getElementById('passwordError');
+
+passwordInput.addEventListener('input', () => {
+  const val = passwordInput.value;
+  let strength = 0;
+  if (val.length >= 8) strength++;
+  if (/[A-Z]/.test(val)) strength++;
+  if (/[0-9]/.test(val)) strength++;
+  if (/[\W]/.test(val)) strength++;
+
+  let colors = ["red", "orange", "yellow", "green"];
+  strengthBar.style.width = (strength*25) + "%";
+  strengthBar.style.background = colors[strength-1] || "red";
+
+  passwordError.textContent = val.length < 8 ? "Password must be at least 8 characters" : "";
+});
+
+togglePassword.addEventListener('click', () => {
+  if(passwordInput.type === "password") {
+    passwordInput.type = "text";
+    togglePassword.textContent = "Hide";
+  } else {
+    passwordInput.type = "password";
+    togglePassword.textContent = "Show";
+  }
+});
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if(nameError.textContent || emailError.textContent || phoneError.textContent || passwordError.textContent) {
+    alert("Fix errors before submitting");
+    return;
+  }
+  const submission = {
+    name: nameInput.value,
+    email: emailInput.value,
+    phone: phoneInput.value,
+    password: passwordInput.value
+  };
+  const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+  submissions.push(submission);
+  localStorage.setItem('submissions', JSON.stringify(submissions));
+
+  alert("Registration successful!");
+  form.reset();
+  strengthBar.style.width = "0%";
+});
+</script>
+</body>
+</html>
