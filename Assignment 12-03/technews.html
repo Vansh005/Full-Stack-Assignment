@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Startup Tech News</title>
+</head>
 
+<body>
+
+<h1>Startup Tech News</h1>
+
+<div id="loader">Loading news...</div>
+<div id="news"></div>
+<script>
+const apiURL = "https://hn.algolia.com/api/v1/search?query=startup";
+
+async function loadNews(){
+
+let loader = document.getElementById("loader");
+let newsContainer = document.getElementById("news");
+try{
+let response = await fetch(apiURL);
+let data = await response.json();
+loader.style.display = "none";
+data.hits.forEach(article => {
+let card = document.createElement("div");
+card.className = "card";
+card.innerHTML = `
+<h3>${article.title}</h3>
+<p>Author: ${article.author}</p>
+<a href="${article.url}" target="_blank">Read More</a>`;
+newsContainer.appendChild(card);
+});
+}
+catch(error){
+loader.innerText = "Failed to load news";
+}
+}
+loadNews();
+</script>
+</body>
+</html>
